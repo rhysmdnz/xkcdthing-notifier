@@ -8,6 +8,8 @@ jobs:
   deploy:
     name: Deploy
     runs-on: ubuntu-latest
+    environment: production
+    concurrency: production
     steps:
       - name: Checkout Repo
         uses: actions/checkout@master

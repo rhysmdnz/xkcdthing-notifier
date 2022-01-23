@@ -28,6 +28,7 @@ jobs:
         run: npm ci --dev
         working-directory: ./functions
       - name: Deploy to Firebase
-        uses: w9jds/firebase-action@master
-        with:
-          args: deploy
+        run: |
+          sudo npm install -g firebase-tools
+          firebase deploy
+

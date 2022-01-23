@@ -24,8 +24,10 @@ jobs:
       - uses: actions/setup-node@v2
         with:
           node-version: '14'
+          cache: 'npm'
+          
       - name: Install Dependencies
-        run: npm ci --dev
+        run: npm ci --also=dev
         working-directory: ./functions
       - name: Deploy to Firebase
         run: |

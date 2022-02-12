@@ -1,47 +1,77 @@
 import * as functions from "firebase-functions";
 import * as admin from "firebase-admin";
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
 
 admin.initializeApp();
 
 const db = admin.firestore();
 
-export const checkXKCD = functions.pubsub.schedule("every 5 minutes")
-    .onRun(async () => {
-      const response: any = await axios.get("https://xkcd.com/info.0.json");
+const topicName = "new_xkcd_comic";
 
-      const topicName = "new_xkcd_comic";
+interface XKCDComic {
+  month: string;
+  num: number;
+  year: string;
+  link: string;
+  news: string;
+  safe_title: string;
+  transcript: string;
+  alt: string;
+  img: string;
+  title: string;
+  day: string;
+}
 
-      const payload : admin.messaging.Message={
-        topic: topicName,
-        notification: {
-          title: "New XKCD Comic",
-          body: response.data["title"],
-        },
-        android: {
-          notification: {
-            imageUrl: response.data["img"],
-            channelId: "new_xkcd_comic",
-          },
-        },
-      };
+async function getLatestId(): Promise<number> {
+  const docRef = db.collection("xkcd").doc("comics");
+  const doc = await docRef.get();
+  return doc.get("latest");
+}
 
-      const docRef = db.collection("xkcd").doc("comics");
-      const doc = await docRef.get();
+async function setLatestId(id: number) {
+  const docRef = db.collection("xkcd").doc("comics");
+  await docRef.set({
+    latest: id,
+  });
+}
 
-      if (response.data["num"] > doc.get("latest") ||
-      doc.get("latest") == undefined) {
-        functions.logger.info("New XKCD Comic!", response.data);
+function constructNotification(comic: XKCDComic): admin.messaging.Message {
+  return {
+    topic: topicName,
+    notification: {
+      title: "New XKCD Comic",
+      body: comic["title"],
+    },
+    android: {
+      notification: {
+        imageUrl: comic["img"],
+        channelId: "new_xkcd_comic",
+      },
+    },
+  };
+}
 
-        await docRef.set({
-          latest: response.data["num"],
-        });
+export const checkXKCD = functions.pubsub
+  .schedule("every 5 minutes")
+  .onRun(async () => {
+    const response: AxiosResponse<XKCDComic> = await axios.get(
+      "https://xkcd.com/info.0.json"
+    );
 
-        try {
-          await admin.messaging().send(payload);
-        } catch (err) {
-          functions.logger.error("notification error", err);
-        }
-        functions.logger.info("notification sent");
+    const latestId = await getLatestId();
+
+    if (response.data["num"] > latestId || latestId == undefined) {
+      functions.logger.info("New XKCD Comic!", response.data);
+
+      await setLatestId(response.data["num"]);
+
+      const notification = constructNotification(response.data);
+
+      try {
+        await admin.messaging().send(notification);
+      } catch (err) {
+        functions.logger.error("notification error", err);
       }
-    });
+      functions.logger.info("notification sent");
+    }
+  });

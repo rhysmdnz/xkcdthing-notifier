@@ -1,14 +1,33 @@
 name: Build and Deploy
 on:
   push:
-    branches:
-      - main
+  pull_request:
 permissions:
   id-token: "write"
 
 jobs:
+  lint:
+    name: Run linters
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: "14"
+          cache: "npm"
+          cache-dependency-path: package-lock.json
+      - name: Install Node.js dependencies
+        run: npm ci
+      - name: Run linters
+        uses: wearerequired/lint-action@v1
+        with:
+          eslint: true
+          prettier: true
   deploy:
+    if: ${{ github.ref == 'refs/heads/main' }}
     name: Deploy
+    needs: lint
     runs-on: ubuntu-latest
     environment: production
     concurrency: production
@@ -28,8 +47,8 @@ jobs:
           node-version: "14"
           cache: "npm"
           cache-dependency-path: package-lock.json
-      - name: Install Dependencies
-        run: npm ci --also=dev
+      - name: Install Node.js dependencies
+        run: npm ci
       - name: Deploy to Firebase
         run: |
           npm install -g firebase-tools

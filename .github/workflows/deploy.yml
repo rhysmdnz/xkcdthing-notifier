@@ -4,7 +4,7 @@ on:
     branches:
       - main
 permissions:
-  id-token: read/write
+  id-token: "read/write"
 
 jobs:
   deploy:

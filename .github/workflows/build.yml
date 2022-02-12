@@ -26,6 +26,7 @@ jobs:
         with:
           eslint: true
           prettier: true
+          continue_on_error: false
   deploy:
     if: ${{ github.ref == 'refs/heads/main' }}
     name: Deploy

@@ -52,7 +52,7 @@ function constructNotification(comic: XKCDComic): admin.messaging.Message {
   };
 }
 
-export const checkXKCD = onSchedule("eviery 5 minutes", async () => {
+export const checkxkcd = onSchedule("eviery 5 minutes", async () => {
   const response: AxiosResponse<XKCDComic> = await axios.get(
     "https://xkcd.com/info.0.json"
   );

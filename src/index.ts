@@ -1,4 +1,5 @@
 import { onSchedule } from "firebase-functions/v2/scheduler";
+import { logger } from "firebase-functions/v2";
 import * as admin from "firebase-admin";
 import axios, { AxiosResponse } from "axios";
 
@@ -59,7 +60,7 @@ export const checkXKCD = onSchedule("eviery 5 minutes", async () => {
   const latestId = await getLatestId();
 
   if (response.data["num"] > latestId || latestId == undefined) {
-    functions.logger.info("New XKCD Comic!", response.data);
+    logger.info("New XKCD Comic!", response.data);
 
     await setLatestId(response.data["num"]);
 
@@ -68,8 +69,8 @@ export const checkXKCD = onSchedule("eviery 5 minutes", async () => {
     try {
       await admin.messaging().send(notification);
     } catch (err) {
-      functions.logger.error("notification error", err);
+      logger.error("notification error", err);
     }
-    functions.logger.info("notification sent");
+    logger.info("notification sent");
   }
 });

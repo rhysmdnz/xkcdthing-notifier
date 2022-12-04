@@ -1,4 +1,4 @@
-const {onSchedule} = require('firebase-functions/v2/scheduler');
+import { onSchedule } from "firebase-functions/v2/scheduler";
 import * as admin from "firebase-admin";
 import axios, { AxiosResponse } from "axios";
 
@@ -52,24 +52,24 @@ function constructNotification(comic: XKCDComic): admin.messaging.Message {
 }
 
 export const checkXKCD = onSchedule("eviery 5 minutes", async () => {
-    const response: AxiosResponse<XKCDComic> = await axios.get(
-      "https://xkcd.com/info.0.json"
-    );
+  const response: AxiosResponse<XKCDComic> = await axios.get(
+    "https://xkcd.com/info.0.json"
+  );
 
-    const latestId = await getLatestId();
+  const latestId = await getLatestId();
 
-    if (response.data["num"] > latestId || latestId == undefined) {
-      functions.logger.info("New XKCD Comic!", response.data);
+  if (response.data["num"] > latestId || latestId == undefined) {
+    functions.logger.info("New XKCD Comic!", response.data);
 
-      await setLatestId(response.data["num"]);
+    await setLatestId(response.data["num"]);
 
-      const notification = constructNotification(response.data);
+    const notification = constructNotification(response.data);
 
-      try {
-        await admin.messaging().send(notification);
-      } catch (err) {
-        functions.logger.error("notification error", err);
-      }
-      functions.logger.info("notification sent");
+    try {
+      await admin.messaging().send(notification);
+    } catch (err) {
+      functions.logger.error("notification error", err);
     }
-  });
+    functions.logger.info("notification sent");
+  }
+});

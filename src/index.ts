@@ -54,7 +54,7 @@ function constructNotification(comic: XKCDComic): admin.messaging.Message {
 
 export const checkxkcd = onSchedule("every 5 minutes", async () => {
   const response: AxiosResponse<XKCDComic> = await axios.get(
-    "https://xkcd.com/info.0.json"
+    "https://xkcd.com/info.0.json",
   );
 
   const latestId = await getLatestId();

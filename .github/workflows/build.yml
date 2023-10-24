@@ -13,7 +13,7 @@ jobs:
     steps:
       - name: Check out Git repository
         uses: actions/checkout@v4
-      - uses: actions/setup-node@v3.8.2
+      - uses: actions/setup-node@v4.0.0
         with:
           node-version: "16"
           cache: "npm"
@@ -44,7 +44,7 @@ jobs:
         with:
           workload_identity_provider: "projects/417555860451/locations/global/workloadIdentityPools/github/providers/github"
           service_account: "github-action-448480065@xkcd-thing.iam.gserviceaccount.com "
-      - uses: actions/setup-node@v3.8.2
+      - uses: actions/setup-node@v4.0.0
         with:
           node-version: "16"
           cache: "npm"

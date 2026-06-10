@@ -3,5 +3,8 @@
   "extends": ["config:recommended", "helpers:pinGitHubActionDigests"],
   "automerge": true,
   "rebaseWhen": "behind-base-branch",
-  "lockFileMaintenance": { "enabled": true }
+  "lockFileMaintenance": {
+    "enabled": true,
+    "automerge": true
+  }
 }

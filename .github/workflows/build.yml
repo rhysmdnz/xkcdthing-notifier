@@ -22,12 +22,10 @@ jobs:
         run: npm ci
       - name: Run build
         run: npm run build
-      - name: Run linters
-        uses: wearerequired/lint-action@548d8a7c4b04d3553d32ed5b6e91eb171e10e7bb # v2
-        with:
-          eslint: true
-          prettier: true
-          continue_on_error: false
+      - name: Run ESLint
+        run: npm run lint
+      - name: Run Prettier
+        run: npx prettier --check .
   deploy:
     if: ${{ github.ref == 'refs/heads/main' }}
     name: Deploy

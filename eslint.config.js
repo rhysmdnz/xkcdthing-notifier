@@ -2,7 +2,7 @@ const eslint = require("@eslint/js");
 const tsParser = require("@typescript-eslint/parser");
 const tsPlugin = require("@typescript-eslint/eslint-plugin");
 const prettier = require("eslint-config-prettier");
-const importPlugin = require("eslint-plugin-import");
+const importPlugin = require("eslint-plugin-import-x");
 const globals = require("globals");
 
 module.exports = [
@@ -27,12 +27,12 @@ module.exports = [
     },
     plugins: {
       "@typescript-eslint": tsPlugin,
-      "import": importPlugin,
+      "import-x": importPlugin,
     },
     rules: {
       ...tsPlugin.configs.recommended.rules,
       quotes: ["error", "double"],
-      "import/no-unresolved": 0,
+      "import-x/no-unresolved": 0,
     },
   },
   prettier,

@@ -1,11 +1,11 @@
-const eslint = require("@eslint/js");
-const tsParser = require("@typescript-eslint/parser");
-const tsPlugin = require("@typescript-eslint/eslint-plugin");
-const prettier = require("eslint-config-prettier");
-const importPlugin = require("eslint-plugin-import-x");
-const globals = require("globals");
+import eslint from "@eslint/js";
+import tsParser from "@typescript-eslint/parser";
+import tsPlugin from "@typescript-eslint/eslint-plugin";
+import prettier from "eslint-config-prettier";
+import importPlugin from "eslint-plugin-import-x";
+import globals from "globals";
 
-module.exports = [
+export default [
   {
     ignores: ["lib/**/*"],
   },
